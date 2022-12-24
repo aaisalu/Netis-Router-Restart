@@ -1,15 +1,30 @@
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-# from selenium.webdriver.chrome.service import Service
 
-browser = webdriver.Firefox()
+# NOTE for firefox browser
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from webdriver_manager.firefox import GeckoDriverManager
 
-# NOTE using service to map driver
-# browser = webdriver.Firefox(service=Service('./geckodriver'))
-# NOTE If router page got login enabled then uncomment and fill your router credentials
+# NOTE for chrome browser
+# from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.chrome.service import Service as ChromeService
+# from webdriver_manager.chrome import ChromeDriverManager
+
+options = Options()
+options.headless = True
+options.add_argument('--no-sandbox')
+options.add_argument('--disable-dev-shm-usage')
+
+# NOTE for firefox browser
+browser = webdriver.Firefox(options=options,
+                            service=FirefoxService(GeckoDriverManager().install()))
+# NOTE for chrome browser
+# browser = webdriver.Chrome(options=options,service=ChromeService(ChromeDriverManager().install()))
+
+# NOTE If the router page is secured then fill up your credential by using below format
 # browser.get("login_username:login_password@ip_of_router")
-
 browser.get("http://192.168.2.1/")
 sleep(2)
 
