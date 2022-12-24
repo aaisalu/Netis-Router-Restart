@@ -1,0 +1,4 @@
+venv
+.fuse_hidden*
+test*.*
+*.log
