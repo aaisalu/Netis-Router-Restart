@@ -48,3 +48,5 @@ reboot_btn.click()
 
 # brower_alert-accept
 browser.switch_to.alert.accept()
+
+browser.quit()
