@@ -16,7 +16,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 
 # NOTE If the router page is secured, then fill up your credentials by using the below format:
 # router_ip= "login_username:login_password@ip_of_router"
-router_ip = "http://192.168.2.1/"
+router_ip = "http://192.168.1.1/"
 
 # to debug set level to debug
 logging.basicConfig(
@@ -54,7 +54,7 @@ def reboot_it(ip_adr):
         advanced_btn = web_driver.browser.find_element(
             By.XPATH, '/html/body/div[2]/div[2]/a/img')
         advanced_btn.click()
-        sleep(2)
+        sleep(1)
 
         # system tools
         sys_tools = web_driver.browser.find_element(
@@ -76,19 +76,21 @@ def reboot_it(ip_adr):
 
         # close browser and logs the result
         quit_driver()
-        logging.info(f"{sucess_msg}\n")
+        logging.info(sucess_msg)
 
         # sends user notification
         ping("⏳  Restarting the router! ", sucess_msg)
 
     except Exception as e:
-        logging.critical(f'{failed_msg} because of the following error {e}\n')
+        logging.critical(
+            f'{failed_msg} because of the following error {e}'.strip())
         ping("⚠️  Restarting the router failed!",
              f'{failed_msg} due to an error {e}')
         quit_driver()
 
 
 def quit_driver():
+    logging.warning("Terminating the WebDriver session\n")
     web_driver.browser.quit()
 
 
