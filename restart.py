@@ -75,8 +75,8 @@ def reboot_it(ip_adr):
         web_driver.browser.switch_to.alert.accept()
 
         # close browser and logs the result
-        quit_driver()
         logging.info(sucess_msg)
+        quit_driver()
 
         # sends user notification
         ping("⏳  Restarting the router! ", sucess_msg)
