@@ -99,6 +99,7 @@ def ping(header, msg):
         title=header,
         message=msg,
         timeout=10,
+        app_name="Restart Router"
     )
 
 
