@@ -8,6 +8,7 @@ from plyer import notification
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
+import os
 
 # NOTE for chrome browser
 # from selenium.webdriver.chrome.options import Options
@@ -22,21 +23,31 @@ router_ip = "http://192.168.1.1/"
 logging.basicConfig(
     level=logging.INFO,
     format="{asctime} - {name:<5} - {levelname:<8} - {message}",
-    style='{',
-    filename='%slog' % __file__[:-2],
-    filemode='a'
+    style="{",
+    filename="%slog" % __file__[:-2],
+    filemode="a",
 )
 
+# disable logging for webdriver
+os.environ["WDM_LOG"] = str(logging.NOTSET)
 
-class web_driver():
+
+class web_driver:
     options = Options()
     options.headless = True  # set false when debugging
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--log-level=3")
+
+    # set log path for firefox at log_path='/dev/null'
+    # Disable logs in windows, at  log_path='nul'
+    os_log_path = "/dev/null" if os.name == "posix" else "NUL"
 
     # for firefox browser
-    browser = webdriver.Firefox(options=options,
-                                service=FirefoxService(GeckoDriverManager().install(), log_path='/dev/null'))
+    browser = webdriver.Firefox(
+        options=options,
+        service=FirefoxService(GeckoDriverManager().install(), log_path=os_log_path),
+    )
     # NOTE for chrome browser
     # browser = webdriver.Chrome(options=options,service=ChromeService(ChromeDriverManager().install()))
 
@@ -52,22 +63,21 @@ def reboot_it(ip_adr):
         # advanced btn
         logging.info("Navigating to the advanced menu")
         advanced_btn = web_driver.browser.find_element(
-            By.XPATH, '/html/body/div[2]/div[2]/a/img')
+            By.XPATH, "/html/body/div[2]/div[2]/a/img"
+        )
         advanced_btn.click()
         sleep(1)
 
         # system tools
-        sys_tools = web_driver.browser.find_element(
-            By.ID, "p_menu_misc")
+        sys_tools = web_driver.browser.find_element(By.ID, "p_menu_misc")
         sys_tools.click()
 
         # restart_menu
-        restart_menu = web_driver.browser.find_element(By.ID, 'c_menu_reboot')
+        restart_menu = web_driver.browser.find_element(By.ID, "c_menu_reboot")
         restart_menu.click()
 
         # reboot_btn
-        reboot_btn = web_driver.browser.find_element(
-            By.XPATH, '//*[@id="reboot"]')
+        reboot_btn = web_driver.browser.find_element(By.XPATH, '//*[@id="reboot"]')
         reboot_btn.click()
         logging.info("Please wait while the router restarts")
 
@@ -82,10 +92,8 @@ def reboot_it(ip_adr):
         ping("⏳  Restarting the router! ", sucess_msg)
 
     except Exception as e:
-        logging.critical(
-            f'{failed_msg} because of the following error {e}'.strip())
-        ping("⚠️  Restarting the router failed!",
-             f'{failed_msg} due to an error {e}')
+        logging.critical(f"{failed_msg} because of the following error {e}".strip())
+        ping("⚠️  Restarting the router failed!", f"{failed_msg} due to an error {e}")
         quit_driver()
 
 
@@ -96,10 +104,7 @@ def quit_driver():
 
 def ping(header, msg):
     notification.notify(
-        title=header,
-        message=msg,
-        timeout=10,
-        app_name="Restart Router"
+        title=header, message=msg, timeout=10, app_name="Restart Router"
     )
 
 
